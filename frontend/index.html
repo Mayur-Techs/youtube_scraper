@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VideoRank</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f9fafb;
+}
+
+header {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    color: #2563eb;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tab {
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #e5e7eb;
+}
+
+.tab.active {
+    background: #2563eb;
+    color: white;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+}
+
+.results {
+    margin-top: 20px;
+}
+
+.card {
+    display: flex;
+    gap: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.card img {
+    width: 120px;
+    border-radius: 6px;
+}
+
+.loading {
+    text-align: center;
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>🎯 VideoRank</header>
+
+<div class="container">
+
+<div class="tabs">
+    <div class="tab active" onclick="setMode('best', this)">Best</div>
+    <div class="tab" onclick="setMode('trending', this)">Trending</div>
+    <div class="tab" onclick="setMode('opportunity', this)">Opportunity</div>
+</div>
+
+<input id="query" placeholder="Search topic..." />
+<input id="max" type="number" value="10" />
+<input id="min_views" type="number" value="10000" />
+
+<button onclick="searchVideos()">Search</button>
+
+<div class="loading" id="loading">Loading...</div>
+<div class="results" id="results"></div>
+
+</div>
+
+<script>
+let currentMode = "best";
+
+function setMode(mode, el) {
+    currentMode = mode;
+
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    el.classList.add("active");
+}
+
+async function searchVideos() {
+    const query = document.getElementById("query").value;
+    const max = document.getElementById("max").value;
+    const minViews = document.getElementById("min_views").value;
+
+    if (!query) {
+        alert("Enter search query");
+        return;
+    }
+
+    const resultsDiv = document.getElementById("results");
+    const loading = document.getElementById("loading");
+
+    resultsDiv.innerHTML = "";
+    loading.style.display = "block";
+
+    const url = `http://127.0.0.1:8000/search?query=${query}&mode=${currentMode}&max_results=${max}&min_views=${minViews}`;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        loading.style.display = "none";
+
+        data.results.forEach((video, i) => {
+            const div = document.createElement("div");
+            div.className = "card";
+
+            div.innerHTML = `
+                <img src="${video.thumbnail}">
+                <div>
+                    <b>${i+1}. ${video.title}</b>
+                    <p>👁 ${video.views} | ⭐ ${video.score}</p>
+                    <a href="${video.url}" target="_blank">Watch</a>
+                </div>
+            `;
+
+            resultsDiv.appendChild(div);
+        });
+
+    } catch (err) {
+        loading.style.display = "none";
+        resultsDiv.innerHTML = "Error loading results";
+    }
+}
+</script>
+
+</body>
+</html>
