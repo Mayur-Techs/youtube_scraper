@@ -135,7 +135,7 @@ async function searchVideos() {
     resultsDiv.innerHTML = "";
     loading.style.display = "block";
 
-    const url = `https://your-render-url.onrender.com/search?query=${query}&mode=${currentMode}&max_results=${max}&min_views=${minViews}`;
+    const url = `https://youtube-scraper-mxsc.onrender.com/search?query=${query}&mode=${currentMode}&max_results=${max}&min_views=${minViews}`;
 
     try {
         const res = await fetch(url);
