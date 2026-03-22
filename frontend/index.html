@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VideoRank</title>
+<title>Rank</title>
 
 <style>
 body {
@@ -135,7 +135,7 @@ async function searchVideos() {
     resultsDiv.innerHTML = "";
     loading.style.display = "block";
 
-    const url = `http://127.0.0.1:8000/search?query=${query}&mode=${currentMode}&max_results=${max}&min_views=${minViews}`;
+    const url = `https://your-render-url.onrender.com/search?query=${query}&mode=${currentMode}&max_results=${max}&min_views=${minViews}`;
 
     try {
         const res = await fetch(url);
